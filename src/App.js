@@ -1,25 +1,35 @@
-import logo from './logo.svg';
 import './App.css';
+import Button from './components/Button';
+import Activity from './components/Activity';
+import { connect } from 'react-redux';
+import { fetchRandomActivity } from './actions/activityActions';
+import History from './components/History';
+import Filter from './components/Filter';
 
-function App() {
+const App = ({ fetchRandomActivity, activity, filter, error }) => {
+  const getRandomActivity = () => {
+    fetchRandomActivity(filter);
+  }
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Button title='Ramdomize activity' onclick={getRandomActivity}/>
+      {error.error ? <h2 className='error'>{ error.error }</h2> : <></>}
+      <Filter />
+      <Activity activity={activity} />
+      <div className='history'>
+        <h2>History</h2>
+        <History />
+      </div>
     </div>
   );
 }
 
-export default App;
+const mapStateToProp = state => ({
+  activity: {
+    ...state.activity.activity
+  },
+  filter: state.activity.filter,
+  error: state.activity.error,
+});
+
+export default connect(mapStateToProp, { fetchRandomActivity })(App);
